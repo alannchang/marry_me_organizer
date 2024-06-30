@@ -1,14 +1,21 @@
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:7.2.2
+    container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
       ZOOKEEPER_TICK_TIME: 2000
     ports:
       - "2181:2181"
+    healthcheck:
+      test: ["CMD", "echo", "ruok", "|", "nc", "localhost", "2181"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   kafka:
     image: confluentinc/cp-kafka:7.2.2
+    container_name: kafka
     ports:
       - "9092:9092"
     environment:
@@ -18,8 +25,16 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
     depends_on:
       - zookeeper
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:9092"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   publisher:
     build: ./publisher
+    container_name: publisher
     depends_on:
-      - kafka
+      kafka:
+        condition: service_healthy
+    entrypoint: ["python", "publisher.py"]
