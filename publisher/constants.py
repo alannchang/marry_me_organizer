@@ -29,9 +29,9 @@ event_list = {
 }
 
 priority_list = {
-    "high": 300,
-    "medium": 600,
-    "low": 900
+    "high": 5,
+    "medium": 10,
+    "low": 15 
 }
 
 routine_list = {
