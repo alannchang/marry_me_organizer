@@ -37,4 +37,54 @@ services:
     depends_on:
       kafka:
         condition: service_healthy
-    entrypoint: ["python", "publisher.py"]
+
+  subscriber1:
+    build: 
+      context: ./subscriber
+      dockerfile: Dockerfile
+    container_name: catering
+    command: python catering.py
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  subscriber2:
+    build:
+      context: ./subscriber
+      dockerfile: Dockerfile
+    container_name: clean_up
+    command: python clean_up.py
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  subscriber3:
+    build:
+      context: ./subscriber
+      dockerfile: Dockerfile
+    container_name: officiant
+    command: python officiant.py
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  subscriber4:
+    build:
+      context: ./subscriber
+      dockerfile: Dockerfile
+    container_name: security
+    command: python security.py
+    depends_on:
+      kafka:
+        condition: service_healthy
+
+  subscriber5:
+    build:
+      context: ./subscriber
+      dockerfile: Dockerfile
+    container_name: waiters
+    command: python waiters.py
+    depends_on:
+      kafka:
+        condition: service_healthy
+

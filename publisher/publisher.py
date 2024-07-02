@@ -65,7 +65,6 @@ def main():
         priority = validate_priority(event)
         if event_category == None or priority == None:
             logging.info(f"Invalid event: {event}")
-            print(f"Invalid event: {event}")
             continue
         message = {
             "event_id": i,
@@ -75,7 +74,7 @@ def main():
             "description": event["description"]
         }
 
-        producer.send(f"event_category", message)
+        producer.send(f"{event_category}", message)
         logging.info(f"Sending event {i}: {message}" )
         time.sleep(WAIT_TIME)
 
