@@ -17,6 +17,15 @@ logging.basicConfig(
 )
 
 
+def create_producer():
+    return KafkaProducer(
+        bootstrap_servers=['kafka-1:9092', 'kafka-2:9093', 'kafka-3:9094'],
+        value_serializer=lambda v: json.dumps(v).encode('utf-8'),
+        request_timeout_ms=20000,  # Timeout after 20 seconds
+        retry_backoff_ms=500  # Backoff time between retries
+    )
+
+
 def random_event_generator():
     '''
     Event format example
@@ -52,10 +61,7 @@ def validate_priority(event):
 
 def main():
     logging.info("Starting publisher")
-    producer = KafkaProducer(
-        bootstrap_servers=['kafka:9092'],
-        value_serializer=lambda v: json.dumps(v).encode('utf-8')
-    )
+    producer = create_producer()
     logging.info("Connected to Kafka broker.")
     logging.info(f"Will generate one unique event every {WAIT_TIME} seconds")
     
