@@ -1,4 +1,5 @@
 import logging
+import os
 from kafka import KafkaConsumer
 
 logging.basicConfig(
@@ -8,10 +9,12 @@ logging.basicConfig(
     level=logging.INFO
 )
 
+kafka_topics = os.getenv('KAFKA_TOPICS').split(',')
+
 consumer = KafkaConsumer(
-        'clean_up',
+        *kafka_topics,
         bootstrap_servers=['kafka-1:9092', 'kafka-2:9093', 'kafka-3:9094'],
-        group_id='test_group',
+        group_id='clean_up',
         auto_offset_reset='earliest',
         enable_auto_commit=True,
         request_timeout_ms=20000,  # Timeout after 20 seconds

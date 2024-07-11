@@ -115,7 +115,7 @@ services:
       kafka-3:
         condition: service_healthy
 
-  subscriber-1:
+  subscriber-catering:
     build: 
       context: ./subscriber
       dockerfile: Dockerfile
@@ -128,8 +128,10 @@ services:
         condition: service_healthy
       kafka-3:
         condition: service_healthy
+    environment:
+      KAFKA_TOPICS: "bad_food,music_too_loud,music_too_low,feeling_ill"
 
-  subscriber-2:
+  subscriber-clean_up:
     build:
       context: ./subscriber
       dockerfile: Dockerfile
@@ -142,8 +144,10 @@ services:
         condition: service_healthy
       kafka-3:
         condition: service_healthy
+    environment:
+      KAFKA_TOPICS: "dirty_table,broken_glass"
 
-  subscriber-3:
+  subscriber-officiant:
     build:
       context: ./subscriber
       dockerfile: Dockerfile
@@ -156,8 +160,10 @@ services:
         condition: service_healthy
       kafka-3:
         condition: service_healthy
+    environment:
+      KAFKA_TOPICS: "missing_rings,missing_bride,missing_groom"
 
-  subscriber-4:
+  subscriber-security:
     build:
       context: ./subscriber
       dockerfile: Dockerfile
@@ -170,8 +176,10 @@ services:
         condition: service_healthy
       kafka-3:
         condition: service_healthy
+    environment:
+      KAFKA_TOPICS: "brawl,not_on_list,person_fell,injured_kid"
 
-  subscriber-5:
+  subscriber-waiters:
     build:
       context: ./subscriber
       dockerfile: Dockerfile
@@ -184,4 +192,6 @@ services:
         condition: service_healthy
       kafka-3:
         condition: service_healthy
+    environment:
+      KAFKA_TOPICS: "broken_glass,person_fell,injured_kid,feeling_ill"
 

@@ -4,10 +4,10 @@ import random
 import logging
 import constants # constants.py
 
-from kafka import KafkaProducer#, KafkaAdminClient
+from kafka import KafkaProducer
 
-EVENT_LIMIT = 15
-WAIT_TIME = 10
+EVENT_LIMIT = 100
+WAIT_TIME = 1
 
 logging.basicConfig(
     filename='publisher.log', 
@@ -80,7 +80,7 @@ def main():
             "description": event["description"]
         }
 
-        producer.send(f"{event_category}", message)
+        producer.send(message['event_type'], message)
         logging.info(f"Sending event {i}: {message}" )
         time.sleep(WAIT_TIME)
 
