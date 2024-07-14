@@ -21,6 +21,16 @@ consumer = KafkaConsumer(
         retry_backoff_ms=500  # Backoff time between retries
     )
 
+
+def process_message(msg):
+        logging.info(f"MESSAGE RECEIVED: {msg}")
+
 while True:
     for message in consumer:
-        logging.info(f"Msg recd: {message}")
+        try:
+                process_message(message)
+                consumer.commit()
+        except Exception as e:
+                print("ERROR: {e}")
+
+
