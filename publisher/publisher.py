@@ -22,6 +22,7 @@ def create_producer():
         bootstrap_servers=['kafka-1:9092', 'kafka-2:9093', 'kafka-3:9094'],
         value_serializer=lambda v: json.dumps(v).encode('utf-8'),
         request_timeout_ms=20000,  # Timeout after 20 seconds
+        retries=5, # Number of retries
         retry_backoff_ms=500  # Backoff time between retries
     )
 
