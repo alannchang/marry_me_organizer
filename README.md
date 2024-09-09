@@ -7,7 +7,8 @@ To design, develop, and test an application capable of receiving multiple events
 ## Stack/Technologies
 
 - Python
-- Kafka 
+- Kafka
+- Zookeeper
 - Docker
 - kSQLdb
 
