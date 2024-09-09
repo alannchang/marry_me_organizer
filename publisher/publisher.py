@@ -6,7 +6,7 @@ import constants # constants.py
 
 from kafka import KafkaProducer
 
-EVENT_LIMIT = 100
+DATASET = 'datasets/dataset_1.json' 
 WAIT_TIME = 1
 
 logging.basicConfig(
@@ -26,18 +26,9 @@ def create_producer():
         retry_backoff_ms=500  # Backoff time between retries
     )
 
-
+'''
 def random_event_generator():
-    '''
-    Event format example
-
-    event = {
-        event_type: feeling_ill,
-        priority: medium,
-        description: guest has stomach ache after eating 5 pieces of cake.
-    }
-    '''
-    event = random.choice(list(constants.event_list.items()))
+   event = random.choice(list(constants.event_list.items()))
     event_type = random.choice(event[1])
     priority = random.choice(list(constants.priority_list.keys()))
     event = {
@@ -46,6 +37,12 @@ def random_event_generator():
         "description": "what's the description for?"
     }
     return event
+'''
+
+def parse_timestamp_to_seconds(timestamp):
+    # Convert the timestamp string (MM:SS) to seconds
+    time_obj = datetime.strptime(timestamp, '%M:%S')
+    return time_obj.minute * 60 + time_obj.second
 
 
 def validate_type(event):
@@ -54,36 +51,56 @@ def validate_type(event):
             return key
     return None
 
+'''
 def validate_priority(event):
     if event["priority"] in list(constants.priority_list.keys()):
         return event["priority"]
     return None
-
+'''
 
 def main():
+    logging.basicConfig(level=logging.INFO)
     logging.info("Starting publisher")
+    
     producer = create_producer()
     logging.info("Connected to Kafka broker.")
-    logging.info(f"Will generate one unique event every {WAIT_TIME} seconds")
     
-    for i in range(1, EVENT_LIMIT):
-        event = random_event_generator()
-        event_category = validate_type(event) 
-        priority = validate_priority(event)
-        if event_category == None or priority == None:
-            logging.info(f"Invalid event: {event}")
-            continue
-        message = {
-            "event_id": i,
-            "event_category": event_category,
-            "event_type": event["event_type"],
-            "priority": event["priority"],
-            "description": event["description"]
-        }
+    with open(INPUT_FILE, 'r') as file:
+        events = json.load(file)
+    
+    events.sort(key=lambda x: parse_timestamp_to_seconds(x['timestamp']))
+    
+    start_time = time.time()
+    
+    event_number = 1
+    while events:
+        current_time = parse_timestamp_to_seconds(events[0]['timestamp'])
+        
+        while time.time() - start_time < current_time:
+            time.sleep(WAIT_TIME) 
+        
+        while events and parse_timestamp_to_seconds(events[0]['timestamp']) == current_time:
+            event = events.pop(0)
+            
+            # Prepare the message with event_id from JSON and event_number for sequence
+            message = {
+                "event_id": event["id"],  # event_id from payload
+                "event_number": event_number,
+                "event_category": validate_type(event),
+                "event_type": event["event_type"],
+                "priority": validate_priority(event),
+                "description": event["description"]
+            }
 
-        producer.send(message['event_type'], message)
-        logging.info(f"Sending event {i}: {message}" )
-        time.sleep(WAIT_TIME)
+            '''
+            if message['event_category'] is None or message['priority'] is None:
+                logging.info(f"Invalid event: {event}")
+                continue
+            '''
+
+            producer.send(message['event_type'], message)
+            logging.info(f"Sending event {event_number}: {message}")
+            event_number += 1
 
 if __name__ == "__main__":
     main()

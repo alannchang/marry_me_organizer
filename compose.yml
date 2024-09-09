@@ -129,7 +129,7 @@ services:
       kafka-3:
         condition: service_healthy
     environment:
-      KAFKA_TOPICS: "bad_food,music_too_loud,music_too_low,feeling_ill"
+      KAFKA_TOPICS: "bad_food,music,feeling_ill"
 
   subscriber-clean_up:
     build:
@@ -145,7 +145,7 @@ services:
       kafka-3:
         condition: service_healthy
     environment:
-      KAFKA_TOPICS: "dirty_table,broken_glass"
+      KAFKA_TOPICS: "dirty_table,broken_items,dirty_floor"
 
   subscriber-officiant:
     build:
@@ -161,7 +161,7 @@ services:
       kafka-3:
         condition: service_healthy
     environment:
-      KAFKA_TOPICS: "missing_rings,missing_bride,missing_groom"
+      KAFKA_TOPICS: "bride,groom"
 
   subscriber-security:
     build:
@@ -177,7 +177,7 @@ services:
       kafka-3:
         condition: service_healthy
     environment:
-      KAFKA_TOPICS: "brawl,not_on_list,person_fell,injured_kid"
+      KAFKA_TOPICS: "brawl,not_on_list,accident"
 
   subscriber-waiters:
     build:
@@ -193,5 +193,5 @@ services:
       kafka-3:
         condition: service_healthy
     environment:
-      KAFKA_TOPICS: "broken_glass,person_fell,injured_kid,feeling_ill"
+      KAFKA_TOPICS: "broken_items,accident,bad_food"
 

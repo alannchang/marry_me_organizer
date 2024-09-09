@@ -2,29 +2,26 @@ event_list = {
     "security": [
         "brawl",
         "not_on_list",
-        "person_fell",
-        "injured_kid"
+        "accident"
     ],
     "clean_up": [
         "dirty_table",
-        "broken_glass"
+        "broken_items"
+        "dirty_floor"
     ],
     "catering": [
         "bad_food",
-        "music_too_loud",
-        "music_too_low",
+        "music",
         "feeling_ill"
     ],
     "officiant": [
-        "missing_rings",
-        "missing_bride",
-        "missing_groom"
+        "bride",
+        "groom"
     ],
     "waiters": [
-    "broken_glass",
-    "person_fell",
-    "injured_kid",
-    "feeling_ill"
+        "broken_glass",
+        "accident",
+        "bad_food",
     ]
 }
 
