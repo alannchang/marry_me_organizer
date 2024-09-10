@@ -1,6 +1,7 @@
 import logging
 import os
 import time
+import json
 from datetime import datetime
 from kafka import KafkaConsumer
 
@@ -20,13 +21,13 @@ consumer = KafkaConsumer(
         auto_offset_reset='earliest',  # Start reading at the earliest offset if no previous offset is found
         enable_auto_commit=False,  # Disable auto-commit of offsets
         request_timeout_ms=20000,  # Timeout after 20 seconds
-        retry_backoff_ms=500  # Backoff time between retries
+        retry_backoff_ms=500,  # Backoff time between retries
+        value_deserializer=lambda x: x.decode('utf-8')
     )
 
 
-guest_db = {}
-
-
+happy_guests = {}
+unhappy_guests = {}
 def calculate_expiration(priority):
     if priority == "High":
         return time.time() + 5
@@ -38,14 +39,15 @@ def calculate_expiration(priority):
 
 def process_message(message):
     deadline = calculate_expiration(message["priority"])
-    guest_db[message["id"]] = ["Happy", deadline, message["event_type"]]
-    logging.info(f"{datetime.datetime.now()}: {guest_db}")
+    happy_guests[message["id"]] = ["Happy", deadline, message["event_type"]]
+    logging.info(f"{datetime.now()}: Happy = {len(happy_guests)} Unhappy = {len(unhappy_guests)}")
 
 
 while True:
     for message in consumer:
         try:
-                process_message(message)
+                message_dict = json.loads(message.value)
+                process_message(message_dict)
                 consumer.commit()
         except Exception as e:
                 print("ERROR: {e}")
