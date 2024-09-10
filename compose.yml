@@ -105,8 +105,11 @@ services:
     tty: true
 
   publisher:
-    build: ./publisher
+    build: 
+      context: ./publisher
+      dockerfile: Dockerfile
     container_name: publisher
+    command: python publisher.py
     depends_on:
       kafka-1:
         condition: service_healthy

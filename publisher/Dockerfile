@@ -2,6 +2,6 @@ FROM python:3.11
 
 COPY . .
 
-RUN pip install -r requirements.txt 
+RUN pip install kafka-python 
 
-CMD python publisher.py 
+CMD python 
