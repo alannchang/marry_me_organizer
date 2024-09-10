@@ -3,7 +3,7 @@ import time
 import random
 import logging
 import constants # constants.py
-
+from datetime import datetime
 from kafka import KafkaProducer
 
 DATASET = 'datasets/dataset_1.json' 
@@ -65,7 +65,7 @@ def main():
     producer = create_producer()
     logging.info("Connected to Kafka broker.")
     
-    with open(INPUT_FILE, 'r') as file:
+    with open(DATASET, 'r') as file:
         events = json.load(file)
     
     events.sort(key=lambda x: parse_timestamp_to_seconds(x['timestamp']))
@@ -88,7 +88,7 @@ def main():
                 "event_number": event_number,
                 "event_category": validate_type(event),
                 "event_type": event["event_type"],
-                "priority": validate_priority(event),
+                "priority": event["priority"], # validate_priority(event),
                 "description": event["description"]
             }
 

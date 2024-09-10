@@ -6,7 +6,7 @@ event_list = {
     ],
     "clean_up": [
         "dirty_table",
-        "broken_items"
+        "broken_itens"
         "dirty_floor"
     ],
     "catering": [
@@ -19,7 +19,7 @@ event_list = {
         "groom"
     ],
     "waiters": [
-        "broken_glass",
+        "broken_itens",
         "accident",
         "bad_food",
     ]
