@@ -43,12 +43,21 @@ def process_message(message):
     logging.info(f"{datetime.now()}: Happy = {len(happy_guests)} Unhappy = {len(unhappy_guests)}")
 
 
+def happy_to_unhappy(happy_guests):
+    for key, value in happy_guests.items():
+        if time.time() > value[1]:
+            unhappy_guests[key] = [value]
+            happy_guests.pop(key, value)
+
+
 while True:
     for message in consumer:
         try:
-                message_dict = json.loads(message.value)
-                process_message(message_dict)
-                consumer.commit()
+            message_dict = json.loads(message.value)
+            process_message(message_dict)
+            consumer.commit()
+            happy_to_unhappy(happy_guests)
+
         except Exception as e:
-                print("ERROR: {e}")
+            print("ERROR: {e}")
 
