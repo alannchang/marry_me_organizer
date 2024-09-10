@@ -25,12 +25,6 @@ event_list = {
     ]
 }
 
-priority_list = {
-    "high": 5,
-    "medium": 10,
-    "low": 15 
-}
-
 routine_list = {
     "standard": [20, 5],
     "intermittent": [5, 5],

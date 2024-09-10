@@ -145,7 +145,7 @@ services:
       kafka-3:
         condition: service_healthy
     environment:
-      KAFKA_TOPICS: "dirty_table,broken_items,dirty_floor"
+      KAFKA_TOPICS: "dirty_table,broken_itens,dirty_floor"
 
   subscriber-officiant:
     build:
@@ -193,5 +193,20 @@ services:
       kafka-3:
         condition: service_healthy
     environment:
-      KAFKA_TOPICS: "broken_items,accident,bad_food"
+      KAFKA_TOPICS: "broken_itens,accident,bad_food"
 
+  guests:
+    build:
+      context: ./subscriber/
+      dockerfile: Dockerfile
+    container_name: guests
+    command: python guests.py
+    depends_on:
+      kafka-1:
+        condition: service_healthy
+      kafka-2:
+        condition: service_healthy
+      kafka-3:
+        condition: service_healthy
+    environment:
+      KAFKA_TOPICS: "accident,bad_food,brawl,bride,broken_itens,dirty_floor,dirty_table,feeling_ill,groom,music,not_on_list"

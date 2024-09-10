@@ -72,7 +72,7 @@ def main():
     
     start_time = time.time()
     
-    event_number = 1
+    i = 1
     while events:
         current_time = parse_timestamp_to_seconds(events[0]['timestamp'])
         
@@ -82,14 +82,13 @@ def main():
         while events and parse_timestamp_to_seconds(events[0]['timestamp']) == current_time:
             event = events.pop(0)
             
-            # Prepare the message with event_id from JSON and event_number for sequence
             message = {
-                "event_id": event["id"],  # event_id from payload
-                "event_number": event_number,
+                "id": event["id"],
                 "event_category": validate_type(event),
                 "event_type": event["event_type"],
                 "priority": event["priority"], # validate_priority(event),
-                "description": event["description"]
+                "description": event["description"],
+                "timestamp": event["timestamp"]
             }
 
             '''
@@ -99,8 +98,8 @@ def main():
             '''
 
             producer.send(message['event_type'], message)
-            logging.info(f"Sending event {event_number}: {message}")
-            event_number += 1
+            logging.info(f"Sending event#{i}: {message}")
+            i += 1
 
 if __name__ == "__main__":
     main()
