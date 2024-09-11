@@ -40,7 +40,7 @@ def calculate_expiration(priority):
 def process_message(message):
     deadline = calculate_expiration(message["priority"])
     happy_guests[message["id"]] = ["Happy", deadline, message["event_type"]]
-    logging.info(f"{datetime.now()}: Happy = {len(happy_guests)} Unhappy = {len(unhappy_guests)}")
+    logging.info(f"Happy = {len(happy_guests)} Unhappy = {len(unhappy_guests)}")
 
 
 def happy_to_unhappy(happy_guests):
