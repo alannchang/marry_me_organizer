@@ -6,7 +6,7 @@ import constants # constants.py
 from datetime import datetime
 from kafka import KafkaProducer
 
-DATASET = 'datasets/dataset_1.json' 
+DATASET = 'datasets/dataset_3.json' 
 WAIT_TIME = 1
 
 logging.basicConfig(
@@ -20,6 +20,7 @@ logging.basicConfig(
 def create_producer():
     return KafkaProducer(
         bootstrap_servers=['kafka-1:9092', 'kafka-2:9093', 'kafka-3:9094'],
+        key_serializer=lambda k: json.dumps(k).encode('utf-8'),
         value_serializer=lambda v: json.dumps(v).encode('utf-8'),
         request_timeout_ms=20000,  # Timeout after 20 seconds
         retries=5, # Number of retries
@@ -86,7 +87,7 @@ def main():
                 "id": event["id"],
                 "event_category": validate_type(event),
                 "event_type": event["event_type"],
-                "priority": event["priority"], # validate_priority(event),
+                "priority": event["priority"], # is this necessary?
                 "description": event["description"],
                 "timestamp": event["timestamp"]
             }
@@ -97,8 +98,8 @@ def main():
                 continue
             '''
 
-            producer.send(message['event_type'], message)
-            logging.info(f"Sending event#{i}: {message}")
+            producer.send(message["event_type"], key=message["priority"], value=message)
+            logging.info(f"Sending event#{i}: {message}\n")
             i += 1
 
 if __name__ == "__main__":

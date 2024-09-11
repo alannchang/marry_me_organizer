@@ -25,9 +25,10 @@ consumer = KafkaConsumer(
         value_deserializer=lambda x: x.decode('utf-8')
     )
 
-
 happy_guests = {}
 unhappy_guests = {}
+
+
 def calculate_expiration(priority):
     if priority == "High":
         return time.time() + 5
@@ -39,8 +40,10 @@ def calculate_expiration(priority):
 
 def process_message(message):
     deadline = calculate_expiration(message["priority"])
-    happy_guests[message["id"]] = ["Happy", deadline, message["event_type"]]
-    logging.info(f"Happy = {len(happy_guests)} Unhappy = {len(unhappy_guests)}")
+    happy_guests[message["id"]] = ["Happy", deadline, message["event_type"], message["priority"]]
+    total_happy = len(happy_guests)
+    total_unhappy = len(unhappy_guests)
+    logging.info(f"Total={total_happy + total_unhappy}|Happy={total_happy}|Unhappy={total_unhappy}\n")
 
 
 def happy_to_unhappy(happy_guests):
