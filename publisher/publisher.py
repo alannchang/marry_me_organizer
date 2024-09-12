@@ -24,7 +24,7 @@ def create_producer():
         value_serializer=lambda v: json.dumps(v).encode('utf-8'),
         request_timeout_ms=20000,  # Timeout after 20 seconds
         retries=5, # Number of retries
-        retry_backoff_ms=500  # Backoff time between retries
+        retry_backoff_ms=500,  # Backoff time between retries
     )
 
 
@@ -85,9 +85,14 @@ def main():
                 logging.info(f"Invalid event: {event}")
                 continue
             '''
-            producer.send(message["event_type"], key=message["priority"], value=message)
-            logging.info(f"Sending event#{i}: {message}\n")
-            i += 1
+            try:
+                producer.send(message["event_type"], key=message["priority"], value=message)
+                logging.info(f"Sending event#{i}: {message}\n")
+                i += 1
+            except Exception as e:
+                print(f"Error: {e}")
+            finally:
+                producer.flush()
 
 if __name__ == "__main__":
     main()
