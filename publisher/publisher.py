@@ -6,7 +6,7 @@ import constants # constants.py
 from datetime import datetime
 from kafka import KafkaProducer
 
-DATASET = 'datasets/dataset_3.json' 
+DATASET = 'datasets/dataset_1.json' 
 WAIT_TIME = 1
 
 logging.basicConfig(
@@ -27,18 +27,6 @@ def create_producer():
         retry_backoff_ms=500  # Backoff time between retries
     )
 
-'''
-def random_event_generator():
-   event = random.choice(list(constants.event_list.items()))
-    event_type = random.choice(event[1])
-    priority = random.choice(list(constants.priority_list.keys()))
-    event = {
-        "event_type": event_type,
-        "priority": priority, 
-        "description": "what's the description for?"
-    }
-    return event
-'''
 
 def parse_timestamp_to_seconds(timestamp):
     # Convert the timestamp string (MM:SS) to seconds
@@ -97,7 +85,6 @@ def main():
                 logging.info(f"Invalid event: {event}")
                 continue
             '''
-
             producer.send(message["event_type"], key=message["priority"], value=message)
             logging.info(f"Sending event#{i}: {message}\n")
             i += 1

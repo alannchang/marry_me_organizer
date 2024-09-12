@@ -14,7 +14,7 @@ kafka_topics = os.getenv('KAFKA_TOPICS').split(',')
 consumer = KafkaConsumer(
         *kafka_topics,
         bootstrap_servers=['kafka-1:9092', 'kafka-2:9093', 'kafka-3:9094'],
-        group_id='clean_up',
+        group_id='team',
         auto_offset_reset='earliest',  # Start reading at the earliest offset if no previous offset is found
         enable_auto_commit=False,  # Disable auto-commit of offsets
         request_timeout_ms=20000,  # Timeout after 20 seconds
