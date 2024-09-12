@@ -43,8 +43,9 @@ docker-compose down --volumes --rmi all
 
 
 ## Results
+
 No workers
-| |Happy|Unhappy|
+|Dataset|Happy|Unhappy|
 |-|-|-|
 |1|0|0|
 |2|0|0|
@@ -54,7 +55,7 @@ No workers
 |6|0|0|
 
 Workers (no optimizations)
-| |Happy|Unhappy|
+|Dataset|Happy|Unhappy|
 |-|-|-|
 |1|0|0|
 |2|0|0|
@@ -64,7 +65,7 @@ Workers (no optimizations)
 |6|0|0|
 
 Workers with bucket priority pattern
-| |Happy|Unhappy|
+|Dataset|Happy|Unhappy|
 |-|-|-|
 |1|0|0|
 |2|0|0|
