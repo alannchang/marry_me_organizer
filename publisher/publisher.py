@@ -34,19 +34,6 @@ def parse_timestamp_to_seconds(timestamp):
     return time_obj.minute * 60 + time_obj.second
 
 
-def validate_type(event):
-    for key, values in constants.event_list.items():
-        if event["event_type"] in values:
-            return key
-    return None
-
-'''
-def validate_priority(event):
-    if event["priority"] in list(constants.priority_list.keys()):
-        return event["priority"]
-    return None
-'''
-
 def main():
     logging.basicConfig(level=logging.INFO)
     logging.info("Starting publisher")
@@ -73,21 +60,14 @@ def main():
             
             message = {
                 "id": event["id"],
-                "event_category": validate_type(event),
                 "event_type": event["event_type"],
-                "priority": event["priority"], # is this necessary?
                 "description": event["description"],
                 "timestamp": event["timestamp"]
             }
 
-            '''
-            if message['event_category'] is None or message['priority'] is None:
-                logging.info(f"Invalid event: {event}")
-                continue
-            '''
             try:
-                producer.send(message["event_type"], key=message["priority"], value=message)
-                logging.info(f"Sending event#{i}: {message}\n")
+                producer.send(message["event_type"], key=event["priority"], value=message)
+                logging.info(f"Sending event #{i}: {message}\n")
                 i += 1
             except Exception as e:
                 print(f"Error: {e}")
