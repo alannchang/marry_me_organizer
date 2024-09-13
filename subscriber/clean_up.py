@@ -1,5 +1,6 @@
 import logging
 import os
+import json
 from kafka import KafkaConsumer
 
 logging.basicConfig(
@@ -18,7 +19,8 @@ consumer = KafkaConsumer(
         auto_offset_reset='earliest',  # Start reading at the earliest offset if no previous offset is found
         enable_auto_commit=False,  # Disable auto-commit of offsets
         request_timeout_ms=20000,  # Timeout after 20 seconds
-        retry_backoff_ms=500  # Backoff time between retries
+        retry_backoff_ms=500,  # Backoff time between retries
+        value_deserializer=lambda x:x.decode('utf-8')
     )
 
 
@@ -28,7 +30,8 @@ def process_message(msg):
 while True:
     for message in consumer:
         try:
-                process_message(message)
+                message_dict = json.loads(message.value)
+                process_message(message_dict)
                 consumer.commit()
         except Exception as e:
                 print("ERROR: {e}")
