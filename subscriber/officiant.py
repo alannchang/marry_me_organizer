@@ -24,16 +24,27 @@ consumer = KafkaConsumer(
     )
 
 
-def process_message(msg):
-        logging.info(f"MESSAGE RECEIVED: {msg}")
+def process_message(msg, priority):
+        logging.info(f"{priority} event: {msg}")
+
+worker_dict = {
+    "High-1": None,
+    "High-2": None,
+    "High-3": None,
+    "High-4": None,
+    "Medium-1": None,
+    "Medium-2": None,
+    "Low": None
+}
 
 while True:
     for message in consumer:
         try:
-                message_dict = json.loads(message.value)
-                process_message(message_dict)
-                consumer.commit()
+            message_dict = json.loads(message.value)
+            priority = json.loads(message.key)
+            process_message(message_dict, priority)
+            consumer.commit()
         except Exception as e:
-                print("ERROR: {e}")
+            print("ERROR: {e}")
 
 

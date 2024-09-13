@@ -20,19 +20,33 @@ consumer = KafkaConsumer(
         enable_auto_commit=False,  # Disable auto-commit of offsets
         request_timeout_ms=20000,  # Timeout after 20 seconds
         retry_backoff_ms=500,  # Backoff time between retries
-        value_deserializer=lambda x:x.decode('utf-8')
+        key_deserializer=lambda k:k.decode('utf-8'), 
+        value_deserializer=lambda v:v.decode('utf-8')
     )
 
-def process_message(msg):
-        logging.info(f"MESSAGE RECEIVED: {msg}")
+
+def process_message(msg, priority):
+    logging.info(f"{priority} event: {msg}")
+
+
+worker_dict = {
+    "High-1": None,
+    "High-2": None,
+    "High-3": None,
+    "High-4": None,
+    "Medium-1": None,
+    "Medium-2": None,
+    "Low": None
+}
 
 while True:
     for message in consumer:
         try:
-                message_dict = json.loads(message.value)    
-                process_message(message_dict)
-                consumer.commit()
+            message_dict = json.loads(message.value)    
+            priority = json.loads(message.key)
+            process_message(message_dict, priority)
+            consumer.commit()
         except Exception as e:
-                print("ERROR: {e}")
+            print("ERROR: {e}")
 
 
