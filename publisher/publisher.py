@@ -62,7 +62,7 @@ def main():
                 "id": event["id"],
                 "event_type": event["event_type"],
                 "description": event["description"],
-                "timestamp": event["timestamp"]
+                "timestamp": (event["timestamp"], time.time())
             }
 
             try:

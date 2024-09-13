@@ -1,7 +1,9 @@
 import logging
 import os
 import json
+import time
 from kafka import KafkaConsumer
+
 
 class Processor:
     def __init__(self, log_filename):
@@ -9,6 +11,16 @@ class Processor:
         self._setup_logging()
         self.kafka_topics = os.getenv('KAFKA_TOPICS').split(',')
         self.consumer = self._create_consumer()
+        self.worker_dict = {
+          "High-1": None,
+          "High-2": None,
+          "High-3": None,
+          "High-4": None,
+          "Medium-1": None,
+          "Medium-2": None,
+          "Low": None
+        }
+
 
     def _setup_logging(self):
         logging.basicConfig(
@@ -18,21 +30,27 @@ class Processor:
             level=logging.INFO
         )
 
+
     def _create_consumer(self):
         return KafkaConsumer(
             *self.kafka_topics,
             bootstrap_servers=['kafka-1:9092', 'kafka-2:9093', 'kafka-3:9094'],
             group_id='team',
-            auto_offset_reset='earliest',  # Start reading at the earliest offset if no previous offset is found
-            enable_auto_commit=False,  # Disable auto-commit of offsets
-            request_timeout_ms=20000,  # Timeout after 20 seconds
-            retry_backoff_ms=500,  # Backoff time between retries
+            auto_offset_reset='earliest',
+            enable_auto_commit=False,
+            request_timeout_ms=20000,
+            retry_backoff_ms=500,
             key_deserializer=lambda k: k.decode('utf-8'),
             value_deserializer=lambda v: v.decode('utf-8')
         )
 
+
     def process_message(self, msg, priority):
-        logging.info(f"{priority} priority event: {msg}")
+        logging.info(f"INCOMING {priority} priority event: {msg}")
+        #for worker in self.worker_dict:
+            #if priority in worker.key() and worker.value() is None:
+                
+
 
     def run(self):
         while True:
