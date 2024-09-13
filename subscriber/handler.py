@@ -5,12 +5,39 @@ import time
 from kafka import KafkaConsumer
 
 
-class Processor:
-    def __init__(self, log_filename):
+class Handler:
+    def __init__(self, log_filename, routine_type):
+        # logging
         self.log_filename = log_filename
         self._setup_logging()
+        # consuming
         self.kafka_topics = os.getenv('KAFKA_TOPICS').split(',')
         self.consumer = self._create_consumer()
+        # handling
+        self.idle_time, self.work_time = set_routine(routine_type)
+        self.working = False
+        self.worker_dict = {
+          "High-1": None,
+          "High-2": None,
+          "High-3": None,
+          "High-4": None,
+          "Medium-1": None,
+          "Medium-2": None,
+          "Low": None
+        }
+
+
+    def start_work(self):
+        self.working = True
+        self._run_routine()
+
+
+    def _run_routine(self):
+        while self.working:
+            self.go_idle()
+            time.sleep(self.idle_time)
+            self.go_work()
+            time.sleep(self.work_time)
 
 
     def _setup_logging(self):
@@ -37,7 +64,7 @@ class Processor:
 
 
     def process_message(self, msg, priority):
-        logging.info(f"INCOMING {priority} priority event: {msg}\n")
+        logging.info(f"INCOMING {priority} priority event: {msg}")
                 
 
     def run(self):
