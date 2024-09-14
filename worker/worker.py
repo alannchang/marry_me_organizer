@@ -15,7 +15,8 @@ class Worker:
         self.consumer_topics = os.getenv('CONSUMER_TOPICS').split(',')
         self.consumer = self._create_consumer()
         # handling
-        # self.idle_time, self.work_time = set_routine(routine_type)
+        self.start_time = time.time()
+        self.idle_sec, self.work_sec = set_routine(routine_type)
         self.working = False
         self.worker_dict = {
           "High-1": None,
@@ -28,17 +29,12 @@ class Worker:
         }
 
 
-    def start_work(self):
-        self.working = True
-        self._run_routine()
+    def switch_routine(self):
+        self.working = not self.working
 
 
-    def _run_routine(self):
-        while self.working:
-            self.go_idle()
-            time.sleep(self.idle_time)
-            self.go_work()
-            time.sleep(self.work_time)
+    def work(self, msg):
+        pass
 
 
     def _setup_logging(self):
@@ -65,7 +61,10 @@ class Worker:
 
 
     def handle_event(self, msg):
-        logging.info(f"INCOMING event: {msg}")
+        logging.info(f"RECEIVED: {msg}\n")
+        if self.working:
+            work(msg)
+
                 
 
     def run(self):
