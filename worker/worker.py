@@ -98,7 +98,6 @@ class Worker:
             self.event_dict["stressed"].append(msg)
         else:
             self.event_dict["stressed"].append(msg)
-
  
 
     def _setup_logging(self):
@@ -129,7 +128,8 @@ class Worker:
         if self.working:
             work(msg)
         else:
-            self.event_dict["stressed"].append()
+            self.event_dict["stressed"].append(msg)
+            logging.info(f"Happy = {self.num_happy}, Stressed = {self.num_stressed}\n")
 
 
     def run(self):
