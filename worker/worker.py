@@ -64,7 +64,7 @@ class Worker:
         )
 
 
-    def process_message(self, msg):
+    def handle_event(self, msg):
         logging.info(f"INCOMING event: {msg}")
                 
 
@@ -73,7 +73,7 @@ class Worker:
             for message in self.consumer:
                 try:
                     message_dict = json.loads(message.value)
-                    self.process_message(message_dict)
+                    self.handle_event(message_dict)
                     self.consumer.commit()
                 except Exception as e:
                     print(f"ERROR: {e}")
