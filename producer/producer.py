@@ -10,7 +10,7 @@ DATASET = 'datasets/dataset_1.json'
 WAIT_TIME = 1
 
 logging.basicConfig(
-    filename='publisher.log', 
+    filename='producer.log', 
     filemode ='w',
     format='%(asctime)s - %(message)s', 
     level=logging.INFO
@@ -36,8 +36,8 @@ def parse_timestamp_to_seconds(timestamp):
 
 def main():
     logging.basicConfig(level=logging.INFO)
-    logging.info("Starting publisher")
-    
+    logging.info("Starting producer")
+
     producer = create_producer()
     logging.info("Connected to Kafka broker.")
     

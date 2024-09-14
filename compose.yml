@@ -104,12 +104,12 @@ services:
     entrypoint: /bin/sh
     tty: true
 
-  publisher:
+  producer:
     build: 
-      context: ./publisher
+      context: ./producer
       dockerfile: Dockerfile
-    container_name: publisher
-    command: python publisher.py
+    container_name: producer 
+    command: python producer.py
     depends_on:
       kafka-1:
         condition: service_healthy
@@ -118,9 +118,9 @@ services:
       kafka-3:
         condition: service_healthy
 
-  subscriber-catering:
+  processor-catering:
     build: 
-      context: ./subscriber
+      context: ./processor
       dockerfile: Dockerfile
     container_name: catering
     command: python catering.py
@@ -132,11 +132,12 @@ services:
       kafka-3:
         condition: service_healthy
     environment:
-      KAFKA_TOPICS: "bad_food,music,feeling_ill"
+      CONSUMER_TOPICS: "bad_food,music,feeling_ill"
+      PRODUCER_TOPICS: "catering-worker"
 
-  subscriber-clean_up:
+  processor-clean_up:
     build:
-      context: ./subscriber
+      context: ./processor
       dockerfile: Dockerfile
     container_name: clean_up
     command: python clean_up.py
@@ -148,11 +149,12 @@ services:
       kafka-3:
         condition: service_healthy
     environment:
-      KAFKA_TOPICS: "dirty_table,broken_itens,dirty_floor"
+      CONSUMER_TOPICS: "dirty_table,broken_itens,dirty_floor"
+      PRODUCER_TOPICS: "clean_up-worker"
 
-  subscriber-officiant:
+  processor-officiant:
     build:
-      context: ./subscriber
+      context: ./processor
       dockerfile: Dockerfile
     container_name: officiant
     command: python officiant.py
@@ -164,11 +166,12 @@ services:
       kafka-3:
         condition: service_healthy
     environment:
-      KAFKA_TOPICS: "bride,groom"
+      CONSUMER_TOPICS: "bride,groom"
+      PRODUCER_TOPICS: "officiant-worker"
 
-  subscriber-security:
+  processor-security:
     build:
-      context: ./subscriber
+      context: ./processor
       dockerfile: Dockerfile
     container_name: security
     command: python security.py
@@ -180,11 +183,12 @@ services:
       kafka-3:
         condition: service_healthy
     environment:
-      KAFKA_TOPICS: "brawl,not_on_list,accident"
+      CONSUMER_TOPICS: "brawl,not_on_list,accident"
+      PRODUCER_TOPICS: "security-worker"
 
-  subscriber-waiters:
+  processor-waiters:
     build:
-      context: ./subscriber
+      context: ./processor
       dockerfile: Dockerfile
     container_name: waiters
     command: python waiters.py
@@ -196,14 +200,15 @@ services:
       kafka-3:
         condition: service_healthy
     environment:
-      KAFKA_TOPICS: "broken_itens,accident,bad_food"
+      CONSUMER_TOPICS: "broken_itens,accident,bad_food"
+      PRODUCER_TOPICS: "waiters-worker"
 
-  guests:
+  worker-catering:
     build:
-      context: ./subscriber/
+      context: ./worker
       dockerfile: Dockerfile
-    container_name: guests
-    command: python guests.py
+    container_name: catering-worker
+    command: python catering.py
     depends_on:
       kafka-1:
         condition: service_healthy
@@ -212,4 +217,70 @@ services:
       kafka-3:
         condition: service_healthy
     environment:
-      KAFKA_TOPICS: "accident,bad_food,brawl,bride,broken_itens,dirty_floor,dirty_table,feeling_ill,groom,music,not_on_list"
+      CONSUMER_TOPICS: "catering"
+
+  worker-clean_up:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    container_name: clean_up-worker
+    command: python clean_up.py
+    depends_on:
+      kafka-1:
+        condition: service_healthy
+      kafka-2:
+        condition: service_healthy
+      kafka-3:
+        condition: service_healthy
+    environment:
+      CONSUMER_TOPICS: "clean_up"
+
+  worker-officiant:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    container_name: officiant-worker
+    command: python officiant.py
+    depends_on:
+      kafka-1:
+        condition: service_healthy
+      kafka-2:
+        condition: service_healthy
+      kafka-3:
+        condition: service_healthy
+    environment:
+      CONSUMER_TOPICS: "officiant"
+
+  worker-security:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    container_name: security-worker
+    command: python security.py
+    depends_on:
+      kafka-1:
+        condition: service_healthy
+      kafka-2:
+        condition: service_healthy
+      kafka-3:
+        condition: service_healthy
+    environment:
+      CONSUMER_TOPICS: "security"
+
+  worker-waiters:
+    build:
+      context: ./worker
+      dockerfile: Dockerfile
+    container_name: waiters-worker
+    command: python waiters.py
+    depends_on:
+      kafka-1:
+        condition: service_healthy
+      kafka-2:
+        condition: service_healthy
+      kafka-3:
+        condition: service_healthy
+    environment:
+      CONSUMER_TOPICS: "waiters"
+
+
