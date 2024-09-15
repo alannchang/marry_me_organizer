@@ -32,8 +32,6 @@ class Worker:
             "happy": [],
             "stressed": []
         }
-        self.num_happy = len(self.event_dict["happy"])
-        self.num_stressed = len(self.event_dict["stressed"])
 
 
     def switch_routine(self):
@@ -47,6 +45,7 @@ class Worker:
             "Concentrated": (60, 60)
         }
         return routine.get(routine_type)
+
 
     def check_time(self):
         current_time = time.time()
@@ -64,40 +63,43 @@ class Worker:
                 if key == "High" and current_time > value["timestamp"][1] + 3:
                     self.event_dict["happy"].append(value)
                     self.worker_dict[key] = None
-                    logging.info(f"Happy = {self.num_happy}, Stressed = {self.num_stressed}")
+                    self.print_guest_status()
                 if key == "Medium"and current_time > value["timestamp"][1] + 3:
                     self.event_dict["happy"].append(value)
                     self.worker_dict[key] = None
-                    logging.info(f"Happy = {self.num_happy}, Stressed = {self.num_stressed}")
+                    self.print_guest_status()
                 if key == "Low" and current_time > value["timestamp"][1] + 3:
                     self.event_dict["happy"].append(value)
                     self.worker_dict[key] = None
-                    logging.info(f"Happy = {self.num_happy}, Stressed = {self.num_stressed}")
-
+                    self.print_guest_status()
 
 
     def work(self, msg):
         current_time = time.time()
         if msg["priority"] == "High" and msg["timestamp"][1] + (5 - 3) > current_time:
-            for worker in self.worker_dict:
-                if "High" in worker.key() and worker.value() == None:
-                    worker.value = msg
+            for key, value in self.worker_dict.items():
+                if "High" in key and value is None:
+                    value = msg
+                    logging.info(f"{key} handling: {msg}\n")
                     return
-            self.event_dict["stressed"].append(msg)
         elif msg["priority"] == "Medium" and msg["timestamp"][1] + (10 - 3) > current_time:
-            for worker in self.worker_dict:
-                if "Medium" in worker.key() and worker.value() == None:
-                    worker.value = msg
+            for key, value in self.worker_dict.items():
+                if "Medium" in key and value is None:
+                    value = msg
+                    logging.info(f"{key} handling: {msg}\n")
                     return
-            self.event_dict["stressed"].append(msg)
         elif msg["priority"] == "Low" and msg["timestamp"][1] + (15 - 3) > current_time:
-            for worker in self.worker_dict:
-                if "Low" in worker.key() and worker.value() == None:
-                    worker.value = msg
+            for key, value in self.worker_dict.items():
+                if "Low" in key and value is None:
+                    value = msg
+                    logging.info(f"HANDLING: {msg}\n")
                     return
-            self.event_dict["stressed"].append(msg)
-        else:
-            self.event_dict["stressed"].append(msg)
+        self.event_dict["stressed"].append(msg)
+        self.print_guest_status()
+
+
+    def print_guest_status(self):
+        logging.info(f"Happy = {len(self.event_dict['happy'])}, Stressed = {len(self.event_dict['stressed'])}")
  
 
     def _setup_logging(self):
@@ -129,7 +131,8 @@ class Worker:
             work(msg)
         else:
             self.event_dict["stressed"].append(msg)
-            logging.info(f"Happy = {self.num_happy}, Stressed = {self.num_stressed}\n")
+            logging.info(f"STRESSED OUT: {msg}\n")
+            self.print_guest_status()
 
 
     def run(self):
