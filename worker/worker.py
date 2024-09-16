@@ -17,7 +17,7 @@ class Worker:
         # handling
         self.start_time = time.time()
         self.idle_sec, self.work_sec = self.set_routine(routine_type)
-        self.time_to_switch = time.time() + self.idle_sec
+        self.time_to_switch = self.start_time + self.idle_sec
         self.working = False
         self.worker_dict = {
           "High-1": None,
@@ -49,14 +49,15 @@ class Worker:
 
     def check_time(self):
         current_time = time.time()
-        if not self.working:
-            if current_time > self.time_to_switch:
-                self.working = True
+        if current_time > self.time_to_switch:
+            if not self.working:
+                self.switch_routine()
+                logging.info("********** WORKING **********\n")
                 self.time_to_switch = current_time + self.work_sec
-        if self.working:
-            if current_time > self.time_to_switch:
-                self.working = False
-                self.time_to_switch = time.time() + self.idle_sec
+            elif self.working:
+                self.switch_routine()
+                logging.info("********** IDLE **********\n")
+                self.time_to_switch = current_time + self.idle_sec
 
         for key, value in self.worker_dict.items():
             if value is not None:
@@ -92,14 +93,14 @@ class Worker:
             for key, value in self.worker_dict.items():
                 if "Low" in key and value is None:
                     value = msg
-                    logging.info(f"HANDLING: {msg}\n")
+                    logging.info(f"{key} handling: {msg}\n")
                     return
         self.event_dict["stressed"].append(msg)
         self.print_guest_status()
 
 
     def print_guest_status(self):
-        logging.info(f"Happy = {len(self.event_dict['happy'])}, Stressed = {len(self.event_dict['stressed'])}")
+        logging.info(f"Happy = {len(self.event_dict['happy'])}, Stressed = {len(self.event_dict['stressed'])}\n")
  
 
     def _setup_logging(self):
@@ -137,9 +138,9 @@ class Worker:
 
     def run(self):
         while True:
-            self.check_time()
             for message in self.consumer:
                 try:
+                    self.check_time()
                     message_dict = json.loads(message.value)
                     self.handle_message(message_dict)
                     self.consumer.commit()
