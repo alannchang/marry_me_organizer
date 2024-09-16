@@ -96,6 +96,7 @@ class Worker:
                     logging.info(f"{key} handling: {msg}\n")
                     return
         self.event_dict["stressed"].append(msg)
+        logging.info(f"STRESSED OUT: {msg}\n")
         self.print_guest_status()
 
 
@@ -129,7 +130,7 @@ class Worker:
     def handle_message(self, msg):
         logging.info(f"RECEIVED: {msg}\n")
         if self.working:
-            work(msg)
+            self.work(msg)
         else:
             self.event_dict["stressed"].append(msg)
             logging.info(f"STRESSED OUT: {msg}\n")
