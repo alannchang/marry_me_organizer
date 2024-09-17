@@ -26,7 +26,7 @@ class Worker:
           "High-4": None,
           "Medium-1": None,
           "Medium-2": None,
-          "Low": None
+          "Low-1": None
         }
         self.event_dict = {
             "happy": [],
@@ -64,14 +64,17 @@ class Worker:
                 if key == "High" and current_time > value["timestamp"][1] + 3:
                     self.event_dict["happy"].append(value)
                     self.worker_dict[key] = None
+                    logging.info(f"{key} finished handling: {value}\n")
                     self.print_guest_status()
                 if key == "Medium"and current_time > value["timestamp"][1] + 3:
                     self.event_dict["happy"].append(value)
                     self.worker_dict[key] = None
+                    logging.info(f"{key} finished handling: {value}\n")
                     self.print_guest_status()
                 if key == "Low" and current_time > value["timestamp"][1] + 3:
                     self.event_dict["happy"].append(value)
                     self.worker_dict[key] = None
+                    logging.info(f"{key} finished handling: {value}\n")
                     self.print_guest_status()
 
 
@@ -80,20 +83,23 @@ class Worker:
         if msg["priority"] == "High" and msg["timestamp"][1] + (5 - 3) > current_time:
             for key, value in self.worker_dict.items():
                 if "High" in key and value is None:
-                    value = msg
+                    self.worker_dict[key] = msg
                     logging.info(f"{key} handling: {msg}\n")
+                    logging.info(self.worker_dict)
                     return
         elif msg["priority"] == "Medium" and msg["timestamp"][1] + (10 - 3) > current_time:
             for key, value in self.worker_dict.items():
                 if "Medium" in key and value is None:
-                    value = msg
+                    self.worker_dict[key] = msg
                     logging.info(f"{key} handling: {msg}\n")
+                    logging.info(self.worker_dict)
                     return
         elif msg["priority"] == "Low" and msg["timestamp"][1] + (15 - 3) > current_time:
             for key, value in self.worker_dict.items():
                 if "Low" in key and value is None:
-                    value = msg
+                    self.worker_dict[key] = msg
                     logging.info(f"{key} handling: {msg}\n")
+                    logging.info(self.worker_dict)
                     return
         self.event_dict["stressed"].append(msg)
         logging.info(f"STRESSED OUT: {msg}\n")
