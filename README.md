@@ -36,11 +36,33 @@ To stop the simulation and remove all containers, images, and builds:
 docker-compose down --volumes --rmi all
 ```
 
+To get live updates on event handling, etc., simply execute
+```
+./log.sh docker-container-name-here
+```
 
+Real-time logs for Producer:
+```
+./log.sh producer
+```
 
-### Examples:
+Real-time logs for Processors:
+```
+./log.sh catering
+./log.sh clean_up
+./log.sh officiant
+./log.sh security
+./log.sh waiters
+```
 
-
+Real-time logs for Workers:
+```
+./log.sh catering-worker
+./log.sh clean-up-worker
+./log.sh officiant-worker
+./log.sh security-worker
+./log.sh waiters-worker
+```
 
 ## Results
 
